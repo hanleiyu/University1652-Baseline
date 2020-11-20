@@ -145,14 +145,14 @@ def which_view(name):
         print('unknown view')
     return -1
 
-def extract_feature(model,dataloaders, view_index = 1):
+def extract_feature(model, dataloaders, view_index = 1):
     features = torch.FloatTensor()
     count = 0
     for data in dataloaders:
         img, label = data
         n, c, h, w = img.size()
         count += n
-        print(count)
+        # print(count)
         ff = torch.FloatTensor(n,512).zero_().cuda()
 
         for i in range(2):
@@ -161,7 +161,7 @@ def extract_feature(model,dataloaders, view_index = 1):
             input_img = Variable(img.cuda())
             for scale in ms:
                 if scale != 1:
-                    # bicubic is only  available in pytorch>= 1.1
+                    # bicubic is only available in pytorch>= 1.1
                     input_img = nn.functional.interpolate(input_img, scale_factor=scale, mode='bilinear', align_corners=False)
                 if opt.views ==2:
                     if view_index == 1:
@@ -214,14 +214,14 @@ if use_gpu:
 # Extract feature
 since = time.time()
 
-#gallery_name = 'gallery_street' 
-#query_name = 'query_satellite' 
+# gallery_name = 'gallery_street'
+# query_name = 'query_satellite'
 
 gallery_name = 'gallery_satellite'
-#query_name = 'query_street'
+query_name = 'query_street'
 
 #gallery_name = 'gallery_street'
-query_name = 'query_drone'
+# query_name = 'query_drone'
 #gallery_name = 'gallery_drone'
 
 which_gallery = which_view(gallery_name)
@@ -246,7 +246,7 @@ if __name__ == "__main__":
         gallery_feature = extract_feature(model,dataloaders[gallery_name], which_gallery)
 
     # For street-view image, we use the avg feature as the final feature.
-    '''
+
     if which_query == 2:
         new_query_label = np.unique(query_label)
         new_query_feature = torch.FloatTensor(len(new_query_label) ,512).zero_()
@@ -265,7 +265,7 @@ if __name__ == "__main__":
         fnorm = torch.norm(gallery_feature, p=2, dim=1, keepdim=True)
         gallery_feature = gallery_feature.div(fnorm.expand_as(gallery_feature))
         gallery_label   = new_gallery_label
-    '''
+
     time_elapsed = time.time() - since
     print('Test complete in {:.0f}m {:.0f}s'.format(
         time_elapsed // 60, time_elapsed % 60))
@@ -276,5 +276,5 @@ if __name__ == "__main__":
 
     print(opt.name)
     result = './model/%s/result.txt'%opt.name
-    os.system('python evaluate_gpu.py | tee -a %s'%result)
+    os.system('/home/yhl/enter/envs/university/bin/python evaluate_gpu.py | tee -a %s'%result)
 

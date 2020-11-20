@@ -187,6 +187,7 @@ def train_model(model, model_test, criterion, optimizer, scheduler, num_epochs=2
         
         # Each epoch has a training and validation phase
         for phase in ['train']:
+
             if phase == 'train':
                 model.train(True)  # Set model to training mode
             else:
@@ -225,6 +226,7 @@ def train_model(model, model_test, criterion, optimizer, scheduler, num_epochs=2
                 # forward
                 if phase == 'val':
                     with torch.no_grad():
+                        #TODO: three views bug
                         outputs, outputs2 = model(inputs, inputs2)
                 else:
                     if opt.views == 2: 
@@ -287,9 +289,9 @@ def train_model(model, model_test, criterion, optimizer, scheduler, num_epochs=2
             if phase == 'train':
                 scheduler.step()
             last_model_wts = model.state_dict()
-            if epoch%20 == 19:
-                save_network(model, opt.name, epoch)
-            #draw_curve(epoch)
+        if epoch%20 == 19:
+            save_network(model, opt.name, epoch)
+        draw_curve(epoch)
 
         time_elapsed = time.time() - since
         print('Training complete in {:.0f}m {:.0f}s'.format(
@@ -315,9 +317,9 @@ ax1 = fig.add_subplot(122, title="top1err")
 def draw_curve(current_epoch):
     x_epoch.append(current_epoch)
     ax0.plot(x_epoch, y_loss['train'], 'bo-', label='train')
-    ax0.plot(x_epoch, y_loss['val'], 'ro-', label='val')
+    # ax0.plot(x_epoch, y_loss['val'], 'ro-', label='val')
     ax1.plot(x_epoch, y_err['train'], 'bo-', label='train')
-    ax1.plot(x_epoch, y_err['val'], 'ro-', label='val')
+    # ax1.plot(x_epoch, y_err['val'], 'ro-', label='val')
     if current_epoch == 0:
         ax0.legend()
         ax1.legend()

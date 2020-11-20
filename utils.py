@@ -3,7 +3,7 @@ import torch
 import yaml
 import torch.nn as nn
 import parser
-from model import ft_net, two_view_net, three_view_net
+from model import ft_net, two_view_net, three_view_net, PCB, ft_net_dense
 
 def make_weights_for_balanced_classes(images, nclasses):
     count = [0] * nclasses
@@ -19,7 +19,7 @@ def make_weights_for_balanced_classes(images, nclasses):
     return weight
 
 # Get model list for resume
-def get_model_list(dirname, key):
+def  get_model_list(dirname, key):
     if os.path.exists(dirname) is False:
         print('no dir: %s'%dirname)
         return None
@@ -87,10 +87,10 @@ def load_network(name, opt):
     opt.fp16 = config['fp16']
     opt.views = config['views']
 
-    if opt.use_dense:
-        model = ft_net_dense(opt.nclasses, opt.droprate, opt.stride, None, opt.pool)
-    if opt.PCB:
-        model = PCB(opt.nclasses)
+    # if opt.use_dense:
+    #     model = ft_net_dense(opt.nclasses, opt.droprate, opt.stride, None, opt.pool)
+    # if opt.PCB:
+    #     model = PCB(opt.nclasses)
 
     if opt.views == 2:
         model = two_view_net(opt.nclasses, opt.droprate, stride = opt.stride, pool = opt.pool, share_weight = opt.share)
